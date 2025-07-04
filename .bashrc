@@ -117,6 +117,7 @@ if ! shopt -oq posix; then
 fi
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="$HOME/Downloads/blender-3.4.1-linux-x64:$PATH"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -134,3 +135,110 @@ bind -m vi-command 'Control-l: clear-screen'
 bind -m vi-insert 'Control-l: clear-screen'
 
 alias dotfiles='/usr/bin/git --git-dir=/home/david/.cfg/ --work-tree=/home/david'
+. "$HOME/.cargo/env"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/david/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/david/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/david/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/david/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export NOTES_DIR=~/Documents/Notes     
+alias notes='export date_str=$(date +%Y-%m-%d) && mkdir -p $NOTES_DIR/$date_str && cd $NOTES_DIR/$date_str && nvim $NOTES_DIR/$date_str/$date_str.md '
+
+function timer_now {
+    date +%s%N
+}
+
+function timer_start {
+    timer_start=${timer_start:-$(timer_now)}
+}
+
+function timer_stop {
+    local delta_us=$((($(timer_now) - $timer_start) / 1000))
+    local us=$((delta_us % 1000))
+    local ms=$(((delta_us / 1000) % 1000))
+    local s=$(((delta_us / 1000000) % 60))
+    local m=$(((delta_us / 60000000) % 60))
+    local h=$((delta_us / 3600000000))
+    # Goal: always show around 3 digits of accuracy
+    if ((h > 0)); then timer_show=${h}h${m}m
+    elif ((m > 0)); then timer_show=${m}m${s}s
+    elif ((s >= 10)); then timer_show=${s}.$((ms / 100))s
+    elif ((s > 0)); then timer_show=${s}.$(printf %03d $ms)s
+    elif ((ms >= 100)); then timer_show=${ms}ms
+    elif ((ms > 0)); then timer_show=${ms}.$((us / 100))ms
+    else timer_show=${us}us
+    fi
+    unset timer_start
+}
+
+
+set_prompt () {
+    Last_Command=$? # Must come first!
+    Blue='\[\e[01;34m\]'
+    White='\[\e[01;37m\]'
+    Red='\[\e[01;31m\]'
+    Green='\[\e[01;32m\]'
+    Reset='\[\e[00m\]'
+    FancyX='\342\234\227'
+    Checkmark='\342\234\223'
+
+
+    # Add a bright white exit status for the last command
+    PS1="$White\$? "
+    # If it was successful, print a green check mark. Otherwise, print
+    # a red X.
+    if [[ $Last_Command == 0 ]]; then
+        PS1+="$Green$Checkmark$Reset "
+    else
+        PS1+="$Red$FancyX$Reset "
+    fi
+
+    # Add the ellapsed time and current date
+    timer_stop
+    PS1+="($timer_show) \t "
+
+    # If root, just print the host in red. Otherwise, print the current user
+    # and host in green.
+    if [[ $EUID == 0 ]]; then
+        PS1+="$Red\\u$Green@\\h "
+    else
+        PS1+="$Green\\u@\\h "
+    fi
+    # Print the working directory and prompt marker in blue, and reset
+    # the text color to the default.
+    PS1+="$Blue\\w \\\$$Reset "
+}
+
+trap 'timer_start' DEBUG
+PROMPT_COMMAND='set_prompt'
+export GIT_EDITOR=vim
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+RESET_CODE="\e[0m"
+ITALIC_CODE="\e[3m"
+border_str="$ITALIC_CODE───────────────────────────────────────────$RESET_CODE"
+pree_fmt=$ITALIC_CODE
+poste_fmt=$ITALIC_CODE
+
+preexec() {
+
+	date_str=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+	echo -e "\nS: - $pree_fmt $date_str$RESET_CODE\n$border_str"; 
+
+}
+precmd() {
+	date_str=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+	echo -e "$border_str\nE: - $poste_fmt $date_str$RESET_CODE";
+
+}
