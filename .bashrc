@@ -227,18 +227,19 @@ export GIT_EDITOR=vim
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
 RESET_CODE="\e[0m"
 ITALIC_CODE="\e[3m"
-border_str="$ITALIC_CODE───────────────────────────────────────────$RESET_CODE"
-pree_fmt=$ITALIC_CODE
-poste_fmt=$ITALIC_CODE
+DIM_CODE="\033[2m"
+border_str="$DIM_CODE$ITALIC_CODE───────────────────────────────────────────$RESET_CODE"
+pree_fmt=$DIM_CODE$ITALIC_CODE
+poste_fmt=$DIM_CODE$ITALIC_CODE
 
 preexec() {
 
 	date_str=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-	echo -e "\nS: - $pree_fmt $date_str$RESET_CODE\n$border_str"; 
+	echo -e "\n$pree_fmt S: - $date_str$RESET_CODE\n$border_str"; 
 
 }
 precmd() {
 	date_str=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-	echo -e "$border_str\nE: - $poste_fmt $date_str$RESET_CODE";
+	echo -e "$border_str\n$poste_fmt E: - $date_str$RESET_CODE";
 
 }
