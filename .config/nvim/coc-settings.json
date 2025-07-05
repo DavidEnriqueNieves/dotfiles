@@ -15,5 +15,6 @@
     "javascriptreact",
     "typescript",
     "typescriptreact"
-  ]
+  ],
+  "snippets.ultisnips.pythonPrompt": false
 }
