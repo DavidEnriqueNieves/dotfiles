@@ -134,7 +134,7 @@ export PATH="$HOME/bin:$PATH"
 bind -m vi-command 'Control-l: clear-screen'
 bind -m vi-insert 'Control-l: clear-screen'
 
-alias dotfiles='/usr/bin/git --git-dir=/home/david/.cfg/ --work-tree=/home/david'
+alias dfls='/usr/bin/git --git-dir=/home/david/.cfg/ --work-tree=/home/david'
 . "$HOME/.cargo/env"
 
 # >>> conda initialize >>>
