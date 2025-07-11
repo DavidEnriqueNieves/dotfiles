@@ -243,3 +243,6 @@ precmd() {
 	echo -e "$border_str\n$poste_fmt E: - $date_str$RESET_CODE";
 
 }
+
+
+alias gpgaenc="gpg --symmetric -- cipher-algo AES256"
