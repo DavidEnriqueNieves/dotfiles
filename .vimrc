@@ -144,3 +144,13 @@ function! InsertDate()
 endfunction
 
 nnoremap <leader>dn i<C-R>="## Notes " . strftime("%d/%m/%Y") . "\n\n"<CR><Esc>
+
+
+" Sets the GUI cursor to be normal? 
+" https://vi.stackexchange.com/questions/37074/set-cursor-to-block
+
+set guicursor=n-v-c:block-nCursor/lCursor,ve:ver35-Curs
+or,o:hor50-Cursor,i-ci:ver25-Cursor/lCursor,r-cr:hor20-
+Cursor/lCursor,sm:block-Cursor-blinkwait175-blinkoff150
+-blinkon175
+
