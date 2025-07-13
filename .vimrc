@@ -153,6 +153,11 @@ nnoremap <leader>dn i<C-R>="## Notes " . strftime("%d/%m/%Y") . "\n\n"<CR><Esc>
 " Sets the GUI cursor to be normal? 
 " https://vi.stackexchange.com/questions/37074/set-cursor-to-block
 
+" Move back a word with Alt-b
+cnoremap <A-b> <S-Left>
+
+" Move forward a word with Alt-f
+cnoremap <A-f> <S-Right>
 
 
 "YAML frontmatter template
