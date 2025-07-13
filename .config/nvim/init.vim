@@ -22,6 +22,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ervandew/supertab'
+Plug 'windwp/nvim-autopairs'
 Plug 'ryanoasis/vim-devicons'
 
 " Markdown / Vimwiki
