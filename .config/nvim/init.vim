@@ -58,7 +58,7 @@ let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 let g:airline#extensions#tabline#enabled = 1
-"
+
 
 " ------------------------------
 " UltiSnips Markdown Settings
@@ -126,6 +126,61 @@ let g:mkdp_echo_preview_url=1
 let g:mkdp_port='8765'
 
 
+function VimwikiNewArticleFromArg(article_title)
+    let l:article_title = a:article_title
+    let l:article = substitute(a:article_title, ' ', '_', 'g')
+
+    let dir_pth = l:article . '/' . l:article . '.md'
+    " TODO: format article to not have spaces
+    let l:pth = './' .  dir_pth
+    let l:glob_dir =  expand('%:p:h') . '/' . l:article 
+
+    " Build the link text
+    let l:link = '[' . a:article_title . ']('.  l:pth . ')'
+
+    " Insert the link below the current line
+    call setline('.', l:link)
+
+    "echo "Creating directory in " . l:glob_dir
+    if mkdir(l:glob_dir, 'p') == 0
+	  echoerr "Failed to create directory: " . l:pth
+    endif
+	    "echo "Created directory" . l:pth
+    "endif
+
+    " Save the current file
+    normal :w
+
+    VimwikiFollowLink
+    let l:creat_time = strftime("%Y-%m-%d %a %I:%M %p")
+    " Insert the link below the current line
+    call setline('.', "# " . l:article_title)
+    normal oo
+    call setline('.', "Created: " . l:creat_time)
+    normal oo
+    startinsert
+
+endfunction
+
+function! VimwikiNewArticleAskName()
+    " Ask for article name
+    let l:article_title = input('Article name: ')
+    if l:article_title == ''
+        echo "No article name provided."
+        return
+    else
+	call VimwikiNewArticleFromArg(l:article_title)
+    endif
+endfunction
+
+function! VimwikiNewWeeklyArticle()
+    let title = GetWeekNotesTitle()
+    call VimwikiNewArticleFromArg(title)
+endfunction
+
+
+nmap <leader>wk :call VimwikiNewWeeklyArticle()<CR>
+nnoremap <leader>wa :call VimwikiNewArticleAskName()<CR>
 """""""""""""""""""""""""""""""
 "     Coc 
 """""""""""""""""""""""""""""""
