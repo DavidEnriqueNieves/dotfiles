@@ -311,3 +311,14 @@ colorscheme one
 let g:airline_powerline_fonts=1
 set directory^=$HOME/.vim/tmp
 let g:one_allow_italics=1
+
+
+
+"""""""""""""""""""""""""""""""
+"     Autopairs
+"""""""""""""""""""""""""""""""
+
+
+lua << EOF
+require("nvim-autopairs").setup {}
+EOF
