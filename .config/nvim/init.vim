@@ -21,9 +21,11 @@ Plug 'preservim/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'ervandew/supertab'
 Plug 'windwp/nvim-autopairs'
 Plug 'ryanoasis/vim-devicons'
+" Remote development
+Plug 'chipsenkbeil/distant.nvim', {  'branch': 'v0.3'}
+"
 
 " Markdown / Vimwiki
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
@@ -49,8 +51,8 @@ let g:UltiSnipsSnippetsDir = "mysnippets"
 " nmap <C-Space> <Plug>VimwikiNextLink
 
 let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+let g:UltiSnipsJumpForwardTrigger = '<Tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-Tab>'
 
 
 let g:vim_markdown_folding_disabled = 1
@@ -65,6 +67,8 @@ let g:airline#extensions#tabline#enabled = 1
 " ------------------------------
 " inserts a picture into a markdown file automatically using <leader> p
 autocmd FileType markdown nmap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<CR>
+autocmd BufRead,BufNewFile *.tex set filetype=tex
+
 let g:vim_markdown_math = 1
 
 " SUPER important for ultisnips since by default, vimwiki will associate all
@@ -189,23 +193,7 @@ nnoremap <leader>wa :call VimwikiNewArticleAskName()<CR>
 " delays and poor user experience
 set updatetime=300
 
-
-" use <tab> to trigger completion and navigate to the next complete item
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-inoremap <silent><expr> <Tab>
-  \ coc#pum#visible() ? coc#pum#confirm() :
-  \ CheckBackspace() ? "\<Tab>" :
-  \ coc#refresh()
-
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#confirm() : "\<Tab>"
 inoremap <silent><expr> <M-j> coc#pum#visible() ? coc#pum#next(1) : "\<M-j>"
 inoremap <silent><expr> <M-k> coc#pum#visible() ? coc#pum#prev(1) : "\<M-k>"
 
@@ -322,3 +310,19 @@ let g:one_allow_italics=1
 lua << EOF
 require("nvim-autopairs").setup {}
 EOF
+
+function! ToggleBackground()
+    if &background == 'dark'
+        set background=light
+    else
+        set background=dark
+    endif
+endfunction
+nnoremap <leader>b :call ToggleBackground()<CR>
+
+
+" After your plug#end() call, set up distant:
+lua << EOF
+require('distant'):setup()
+EOF
+
