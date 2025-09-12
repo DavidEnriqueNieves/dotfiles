@@ -116,7 +116,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="/home/david/.local/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/Downloads/blender-3.4.1-linux-x64:$PATH"
 
 export NVM_DIR="$HOME/.nvm"
@@ -246,3 +246,8 @@ precmd() {
 
 
 alias gpgaenc="gpg --symmetric -- cipher-algo AES256"
+
+
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
