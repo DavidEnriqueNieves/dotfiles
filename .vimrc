@@ -1,5 +1,4 @@
 
-" from L3Harris
 
 """"""""""""""""""""""""""""""
 " Set configs
@@ -107,10 +106,22 @@ cabbrev d4t3 <C-R>=strftime("%Y-%m-%d")<CR>
 nnoremap <leader># :call ToggleNumber()<CR>
 
 " For moving around windows
+" For windows?
 nnoremap <A-j> <C-W><C-J>
 nnoremap <A-k> <C-W><C-K>
 nnoremap <A-l> <C-W><C-L>
 nnoremap <A-h> <C-W><C-H>
+" For linux?
+nnoremap <M-j> <C-W><C-J>
+nnoremap <M-k> <C-W><C-K>
+nnoremap <M-l> <C-W><C-L>
+nnoremap <M-h> <C-W><C-H>
+
+" For jumping around in insert mode with alt keys
+tnoremap <M-j> <C-\><C-n><C-W><C-J>
+tnoremap <M-k> <C-\><C-n><C-W><C-K>
+tnoremap <M-l> <C-\><C-n><C-W><C-L>
+tnoremap <M-h> <C-\><C-n><C-W><C-H>
 
 " centers when searching or going to the next matching word
 nnoremap n nzz
@@ -204,3 +215,60 @@ function! GetWeekNotesTitle()
   let notes_title =  "Notes for week of " . start . " to " . end
   return notes_title
 endfunction
+
+
+" Automatically enter terminal mode when switching to a terminal buffer
+augroup TerminalAutoInsert
+  autocmd!
+  autocmd BufEnter * if &buftype == 'terminal' | startinsert | endif
+augroup END
+
+
+" Map Control-Space in insert mode to create a new line below the current line and enter insert mode
+"inoremap <C-Space> <Esc>O
+"nnoremap <C-Space> <Esc>O<Esc>
+
+highlight Cursor guifg=white guibg=black
+highlight iCursor guifg=white guibg=steelblue
+set guicursor=n-v-c:block-Cursor
+set guicursor+=i:ver100-iCursor
+set guicursor+=n-v-c:blinkon0
+set guicursor+=i:blinkwait10
+
+" Set completeopt to have a better completion experience
+"set completeopt=menuone,noinsert,noselect
+
+
+" Set the highlight duration (in milliseconds)
+let g:highlightedyank_highlight_duration = 300
+
+" Customize the highlight color
+highlight HighlightedyankRegion cterm=NONE ctermbg=yellow ctermfg=black guibg=yellow guifg=black
+
+nmap <leader>t :tabnew<CR>
+
+set colorcolumn=79
+set textwidth=205
+set wrap
+set linebreak
+
+function! ToggleQuickFix()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        vertical copen
+	wincmd L   " Move the quickfix window to the far right
+	vertical resize 40   " Set width to 40 columns (adjust as needed)
+
+
+    else
+        cclose
+    endif
+endfunction
+
+nnoremap <silent> <F4> :call ToggleQuickFix()<cr>
+
+set makeprg=flake8
+set errorformat=%f:%l:%c:\ %m
+nnoremap cn :cnext<cr>
+nnoremap cm :make<cr>
+nnoremap cp :cprev<cr>
+tnoremap <Esc> <C-\><C-n>
