@@ -45,4 +45,5 @@
         "authProvider": "github"
     },
     "github.copilot.nextEditSuggestions.enabled": true,
+    "editor.minimap.enabled": false,
 }
