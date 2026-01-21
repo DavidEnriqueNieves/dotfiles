@@ -84,9 +84,9 @@ map <F9> gT
 map <F10> gt
 map <F8> :q<CR>
 
-imap fj 
-imap jf 
-imap jj 
+imap fj <Esc>
+imap jf <Esc>
+imap jj <Esc>
 
 
 " Got bless this man:
@@ -248,7 +248,6 @@ highlight HighlightedyankRegion cterm=NONE ctermbg=yellow ctermfg=black guibg=ye
 nmap <leader>t :tabnew<CR>
 
 set colorcolumn=79
-set textwidth=205
 set wrap
 set linebreak
 
