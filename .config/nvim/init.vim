@@ -49,6 +49,14 @@ let g:UltiSnipsSnippetDirectories = ["mysnippets"]
 let g:UltiSnipsSnippetsDir = "mysnippets"
 
 " nmap <C-Space> <Plug>VimwikiNextLink
+"
+augroup VimwikiTabFix
+  autocmd!
+  autocmd FileType vimwiki silent! nunmap <buffer> <Tab>
+  autocmd FileType vimwiki silent! nunmap <buffer> <S-Tab>
+  autocmd FileType vimwiki silent! iunmap <buffer> <Tab>
+  autocmd FileType vimwiki silent! iunmap <buffer> <S-Tab>
+augroup END
 
 let g:UltiSnipsExpandTrigger="<Tab>"
 let g:UltiSnipsJumpForwardTrigger = '<Tab>'
@@ -196,7 +204,6 @@ set updatetime=300
 inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#confirm() : "\<Tab>"
 inoremap <silent><expr> <M-j> coc#pum#visible() ? coc#pum#next(1) : "\<M-j>"
 inoremap <silent><expr> <M-k> coc#pum#visible() ? coc#pum#prev(1) : "\<M-k>"
-
 
 
 " Use `[g` and `]g` to navigate diagnostics
