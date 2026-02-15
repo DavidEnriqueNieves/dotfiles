@@ -1,0 +1,41 @@
+extends common_latex
+
+global !p
+def math():
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+
+def comment(): 
+	return vim.eval('vimtex#syntax#in_comment()') == '1'
+
+def env(name):
+	[x,y] = vim.eval("vimtex#env#is_inside('" + name + "')") 
+	return x != '0' and y != '0'
+
+endglobal
+
+
+context "math()"
+snippet unl "underline" iA
+\underline{$1}$0
+endsnippet
+
+context "math()"
+snippet ubrack "underbracket" iA
+\underbracket{$1}_{$2}$0
+endsnippet
+
+context "math()"
+snippet obrack "overbracket" iA
+\overbracket{$1}^{$2}$0
+endsnippet
+
+context "math()"
+snippet ubrace "underbrace" iA
+\underbrace{$1}_{$2}$0
+endsnippet
+
+context "math()"
+snippet obrace "overbrace" iA
+\overbrace{$1}^{$2}$0
+endsnippet
+

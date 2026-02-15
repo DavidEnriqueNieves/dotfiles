@@ -1,0 +1,17 @@
+extends common_latex
+
+snippet fm "YAML frontmatter (basic)" ib
+---
+title: ${1:Title}
+date: `!v strftime("%Y-%m-%d %H:%M:%S")`
+draft: ${2:false}
+tags:
+  - ${3:tag1}
+categories:
+  - ${4:category1}
+description: ${5:Short description.}
+author: ${6:Your Name}
+---
+
+$0
+endsnippet
