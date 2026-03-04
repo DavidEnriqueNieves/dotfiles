@@ -56,11 +56,11 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
+# Color definitions
+COLOR_RESET="\[\033[0m\]"
+COLOR_USER_HOST="\[\033[1;32m\]"
+COLOR_PATH="\[\033[1;34m\]"
+
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
@@ -195,7 +195,15 @@ set_prompt () {
     Reset='\[\e[00m\]'
     FancyX='\342\234\227'
     Checkmark='\342\234\223'
+    # Host-specific colors (256-color foreground)
+    C_OPTIMUS="\[\033[38;5;202m\]"     # vivid orange
+    C_AI_PANTHER="\[\033[38;5;39m\]"   # electric cyan-blue
+    C_COCES="\[\033[38;5;178m\]"       # muted amber
+    C_NOCTUA="\[\033[38;5;60m\]"       # deep indigo
+    C_ORPHEUSASUS="\[\033[38;5;135m\]" # orchid / mythic purple
+    C_USER_SOFT_BLUE="\[\033[38;5;110m\]"   # soft steel-blue
 
+    declare -A colorDict=(["optimus"]=$C_OPTIMUS ["ai-panther.fit.edu"]=$C_AI_PANTHER ["coces"]=$C_COCES ["noctua"]=$C_NOCTUA ["orpheusasus"]=$C_ORPHEUSASUS)
 
     # Add a bright white exit status for the last command
     PS1="$White\$? "
@@ -210,14 +218,17 @@ set_prompt () {
     # Add the ellapsed time and current date
     timer_stop
     PS1+="($timer_show) \t "
-
+    
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
-    if [[ $EUID == 0 ]]; then
-        PS1+="$Red\\u$Green@\\h "
-    else
-        PS1+="$Green\\u@\\h "
-    fi
+
+    host_color=$Green
+    host="$(hostname)"
+    host="$(hostname)"
+    host_color="${colorDict[$host]:-$Green}"
+	
+
+    PS1+="$C_USER_SOFT_BLUE\\u$Reset@$host_color\\h$Reset"
     # Print the working directory and prompt marker in blue, and reset
     # the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
@@ -254,3 +265,75 @@ alias gpgaenc="gpg --symmetric -- cipher-algo AES256"
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --bash)"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+
+slast_compgens() {
+    local cur startRange jobs
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    startRange=$(date -d "1 month ago" --iso-8601=date)
+
+    jobs=$(sacct --starttime="$startRange" 2>/dev/null \
+        | awk '{print $1}' \
+        | grep -oE '^[0-9]+$')
+
+    COMPREPLY=($(compgen -W "$jobs" -- "$cur"))
+}
+
+
+slast_help() {
+cat << 'END' 
+Usage: 
+  slast [JOBID] 
+
+Description:
+  Opens the stdout file of a recent Slurm job using 'less'.
+
+  If JOBID is omitted, the most recent job ID from 'sacct' is used.
+
+Arguments:
+  JOBID     Numeric Slurm job ID to inspect.
+
+Options:
+  -h, --help    Show this help message and exit.
+
+Behavior:
+  - Searches jobs from the past month.
+  - Resolves the StdOut path via 'scontrol show job'.
+  - Opens the output file with 'less'.
+
+Examples:
+  slast
+      Opens the most recent job's stdout.
+
+  slast 123456
+      Opens stdout for job 123456.
+END
+}
+
+
+ slast () {                                                                                                                                           
+
+	    case "$1" in
+		-h|--help)
+		    slast_help
+		    return 0
+		    ;;
+	    esac
+                                                                                
+         lastJobId=$(sacct | awk '{print $1}' | tail -n 1 | grep -oP "^\d+")    
+         if [[ -z $1 ]]; then                                                   
+                 selJobid="$lastJobId"                                          
+         else                                                                   
+                 selJobid="$1"                                                  
+         fi                                                                     
+                                                                                
+         startRange=$(date -d "1 month ago" --iso-8601=date)                    
+         lastJobs=$(sacct --starttime=$startRange  | awk '{print $1}' | grep -oP "^\d+$")
+                                                                                
+                                                                                
+         outPath=$(scontrol show job $selJobid | grep -oP "(?<=StdOut=).*")     
+         less $outPath                                                          
+ } 
+complete -F slast_compgens slast
