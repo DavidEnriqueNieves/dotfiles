@@ -225,14 +225,30 @@ set_prompt () {
     host_color=$Green
     host="$(hostname)"
     host="$(hostname)"
-    host_color="${colorDict[$host]:-$Green}"
-	
+    export HOST_COLOR_ANSI="${colorDict[$host]:-$Green}"
 
-    PS1+="$C_USER_SOFT_BLUE\\u$Reset@$host_color\\h$Reset"
+ 	if  [[ -z $(compgen -c | grep -oP "^tmux"$) ]]; then
+
+	export HOST_COLOR_NUM=$(echo $HOST_COLOR_ANSI  | grep -oP "(?<=;)(\d+)(?=m)")
+	export TMUX_COL_STR="colour$HOST_COLOR_NUM"
+	echo "TMUX COLOR NUM is $HOST_COLOR_NUM"
+	echo "TMUX COLOR STRING IS $TMUX_COL_STR"
+	export TMUX_BG=$TMUX_COL_STR
+	export TMUX_FG=$TMUX_COL_STR
+	export TMUX_ACCENT=$TMUX_COL_STR
+
+	tmux set -g status-style "bg=${TMUX_BG}"
+	tmux set -g pane-border-style "fg=${TMUX_ACCENT}"
+	tmux set -g pane-active-border-style "fg=${TMUX_FG}"
+	
+	fi
+
+    PS1+="$C_USER_SOFT_BLUE\\u$Reset@$HOST_COLOR_ANSI\\h$Reset"
     # Print the working directory and prompt marker in blue, and reset
     # the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
 }
+
 
 trap 'timer_start' DEBUG
 PROMPT_COMMAND='set_prompt'
