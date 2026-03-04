@@ -227,7 +227,7 @@ set_prompt () {
     host="$(hostname)"
     export HOST_COLOR_ANSI="${colorDict[$host]:-$Green}"
 
- 	if  [[ -z $(compgen -c | grep -oP "^tmux"$) ]]; then
+ 	if  ! [[ -z $(compgen -c | grep -oP "^tmux"$) ]]; then
 
 	export HOST_COLOR_NUM=$(echo $HOST_COLOR_ANSI  | grep -oP "(?<=;)(\d+)(?=m)")
 	export TMUX_COL_STR="colour$HOST_COLOR_NUM"
