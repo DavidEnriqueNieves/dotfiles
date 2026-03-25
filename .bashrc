@@ -446,14 +446,19 @@ EOF
 	fi
 
 	local ACCOUNT_USER=$(echo $gpg_out | grep -oP "(?<=ACCOUNT=')\S+(?=')")
+	local act_grp_out="$?"
 
 	if [[ -z "$to_mail" ]]; then
 		to_mail=$ACCOUNT_USER
 	fi
 
-
 	local PWD=$(echo $gpg_out | grep -oP "(?<=PWD=')[^']+(?=')")
 	local URL=$(echo $gpg_out | grep -oP "(?<=URL=')[^']+(?=')")
+
+	if [ -z "$PWD" ] | [ -z "$URL" ]; then
+		echo "Error while obtaining values from GPG! PWD and URL were not found!"
+		return 0
+	fi
 
 	echo "Attempting to send an email..."
 	local out=$(curl --url "$URL" --ssl-reqd   --mail-from "$ACCOUNT_USER" --mail-rcpt "$to_mail"   --user "$ACCOUNT_USER:$PWD" --insecure -T <(echo -e "Subject: $subjectStr\n\n$bodyStr") > /dev/null 2>&1)
