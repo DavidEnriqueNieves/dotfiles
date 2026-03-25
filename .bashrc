@@ -353,3 +353,122 @@ END
          less $outPath                                                          
  } 
 complete -F slast_compgens slast
+
+function gmailer () {
+
+function help_printout() {
+	cat << EOF 
+	A very simple script to decrypt some files and to then send n email with the
+	credentials! Make sure your encrypted file has the following structure:
+	
+	ALSO, make sure that it was encrypted symmetrically with GPG, preferably with AES256!
+
+	---
+	# your gmail account
+	ACCOUNT='...'
+	# your gmail account app password
+	# see https://support.google.com/accounts/answer/185833?hl=en
+	PWD='...'
+	# the smtps url, starting with smtps://smtp.gmail.com
+	URL='...'
+	---
+
+	--subject	string	subjectStr	Email subject line
+	--body	string	bodyStr	Email body text
+	--to_mail	email	to_mail	Recipient email address
+	--creds-path	path	gmail_creds_path	Path to Gmail credentials file (encrypted by GPG)
+	-h, --help	none	(prints help)	Displays usage text
+EOF
+}
+	set -u
+
+	local subjectStr="Subject: "
+	local bodyStr="This is an automated email..."
+	local gmail_creds_path="./gmail_creds.txt.gpg"
+	local to_mail=""
+	local verbose=0
+
+	if [[ $# -eq 0 ]]; then
+		help_printout
+		return 0
+	fi
+
+
+	while [[ $# -gt 0 ]]
+	do
+		case "$1" in
+			--subject)
+				subjectStr="$2"
+				shift 2
+				;;
+			--body)
+				bodyStr="$2"
+				shift 2
+				;;
+			--to_mail)
+				to_mail="$2"
+				shift 2
+				;;
+			--creds-path)
+				gmail_creds_path="$2"
+				shift 2
+				;;
+			-v|--verbose)
+				verbose=1
+				shift
+				;;
+			-h|--help)
+				help_printout
+				return 0
+				;;
+			--default)
+				echo "Error! Option '$1' not recognized!"
+				return 1
+				;;
+		esac
+	done
+
+	if ! [[ -f $gmail_creds_path ]]; then
+		echo "Error! Encrypted credentials file at '$gmail_creds_path' does NOT exist. Change the path of the credentails file using --creds-path"
+		return 1
+	fi
+
+	local gpg_out=$(gpg --decrypt $gmail_creds_path > /dev/null 2>&1) 
+
+	if [[ $verbose -eq 0 ]]; then
+		echo "$gpg_out"
+	fi
+
+	local gpg_out_code="$?"
+	if [[ $gpg_out_code -ne 0 ]]; then 
+		echo "GPG: Error when decrypting $gmail_creds_path!. Change the path of the credentails file using --creds-path"
+		return 1
+	fi
+
+	local ACCOUNT_USER=$(echo $gpg_out | grep -oP "(?<=ACCOUNT=')\S+(?=')")
+
+	if [[ -z "$to_mail" ]]; then
+		to_mail=$ACCOUNT_USER
+	fi
+
+
+	local PWD=$(echo $gpg_out | grep -oP "(?<=PWD=')[^']+(?=')")
+	local URL=$(echo $gpg_out | grep -oP "(?<=URL=')[^']+(?=')")
+
+	echo "Attempting to send an email..."
+	out=$(curl --url "$URL" --ssl-reqd   --mail-from "$ACCOUNT_USER" --mail-rcpt "$to_mail"   --user "$ACCOUNT_USER:$PWD" --insecure -T <(echo -e "Subject: $subjectStr\n\n$bodyStr") > /dev/null 2>&1)
+
+	if [[ $verbose -eq 0 ]]; then
+		echo "$out"
+	fi
+	
+	local out_code="$?"
+	if [[ $out_code -eq 0 ]]; then
+		echo "Email sent successfully!"
+		return 0
+	else
+		echo "Failed to send email ($out_code)"
+		return 1
+	fi
+	set +u
+}
