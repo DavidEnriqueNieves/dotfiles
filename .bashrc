@@ -433,7 +433,7 @@ EOF
 		return 1
 	fi
 
-	local gpg_out=$(gpg --decrypt $gmail_creds_path > /dev/null 2>&1) 
+	local gpg_out=$(gpg --decrypt $gmail_creds_path) 
 
 	if [[ $verbose -eq 0 ]]; then
 		echo "$gpg_out"
