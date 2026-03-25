@@ -231,8 +231,8 @@ set_prompt () {
 
 	export HOST_COLOR_NUM=$(echo $HOST_COLOR_ANSI  | grep -oP "(?<=;)(\d+)(?=m)")
 	export TMUX_COL_STR="colour$HOST_COLOR_NUM"
-	echo "TMUX COLOR NUM is $HOST_COLOR_NUM"
-	echo "TMUX COLOR STRING IS $TMUX_COL_STR"
+	# echo "TMUX COLOR NUM is $HOST_COLOR_NUM"
+	# echo "TMUX COLOR STRING IS $TMUX_COL_STR"
 	export TMUX_BG=$TMUX_COL_STR
 	export TMUX_FG=$TMUX_COL_STR
 	export TMUX_ACCENT=$TMUX_COL_STR
@@ -456,7 +456,7 @@ EOF
 	local URL=$(echo $gpg_out | grep -oP "(?<=URL=')[^']+(?=')")
 
 	echo "Attempting to send an email..."
-	out=$(curl --url "$URL" --ssl-reqd   --mail-from "$ACCOUNT_USER" --mail-rcpt "$to_mail"   --user "$ACCOUNT_USER:$PWD" --insecure -T <(echo -e "Subject: $subjectStr\n\n$bodyStr") > /dev/null 2>&1)
+	local out=$(curl --url "$URL" --ssl-reqd   --mail-from "$ACCOUNT_USER" --mail-rcpt "$to_mail"   --user "$ACCOUNT_USER:$PWD" --insecure -T <(echo -e "Subject: $subjectStr\n\n$bodyStr") > /dev/null 2>&1)
 
 	if [[ $verbose -eq 0 ]]; then
 		echo "$out"
