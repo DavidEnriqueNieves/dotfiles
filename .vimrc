@@ -245,7 +245,7 @@ let g:highlightedyank_highlight_duration = 300
 " Customize the highlight color
 highlight HighlightedyankRegion cterm=NONE ctermbg=yellow ctermfg=black guibg=yellow guifg=black
 
-nmap <leader>t :tabnew<CR>
+nmap <leader>tt :tabnew<CR>
 
 set colorcolumn=79
 set wrap
@@ -271,3 +271,14 @@ nnoremap cn :cnext<cr>
 nnoremap cm :make<cr>
 nnoremap cp :cprev<cr>
 tnoremap <Esc> <C-\><C-n>
+colorscheme default
+
+function! ToggleBackground()
+    if &background == 'dark'
+        set background=light
+    else
+        set background=dark
+    endif
+endfunction
+nnoremap <leader>b :call ToggleBackground()<CR>
+
