@@ -72,7 +72,7 @@ endfunction
 " God bless this command!
 
 command! EditBashRc edit ~/.bashrc
-command! EditNvimConfig edit ~/.config/nvim/init.vim
+command! EditNvimConfig edit ~/.config/nvim/init.lua
 command! EditVimConfig edit ~/.vimrc
 
 
@@ -245,7 +245,7 @@ let g:highlightedyank_highlight_duration = 300
 " Customize the highlight color
 highlight HighlightedyankRegion cterm=NONE ctermbg=yellow ctermfg=black guibg=yellow guifg=black
 
-nmap <leader>tt :tabnew<CR>
+nmap <leader>tn :tabnew<CR>
 
 set colorcolumn=79
 set wrap
@@ -281,4 +281,5 @@ function! ToggleBackground()
     endif
 endfunction
 nnoremap <leader>b :call ToggleBackground()<CR>
+" critical fix: prevents vimwiki from hijacking markdown
 

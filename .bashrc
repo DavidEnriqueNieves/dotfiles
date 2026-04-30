@@ -237,9 +237,9 @@ set_prompt () {
 	export TMUX_FG=$TMUX_COL_STR
 	export TMUX_ACCENT=$TMUX_COL_STR
 
-	tmux set -g status-style "bg=${TMUX_BG}"
-	tmux set -g pane-border-style "fg=${TMUX_ACCENT}"
-	tmux set -g pane-active-border-style "fg=${TMUX_FG}"
+	tmux set -g status-style "bg=${TMUX_BG}" > /dev/null 2>&1
+	tmux set -g pane-border-style "fg=${TMUX_ACCENT}" > /dev/null 2>&1
+	tmux set -g pane-active-border-style "fg=${TMUX_FG}" > /dev/null 2>&1
 	
 	fi
 
@@ -477,3 +477,8 @@ EOF
 	fi
 	set +u
 }
+
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
+# opencode
+export PATH=/home/david/.opencode/bin:$PATH
