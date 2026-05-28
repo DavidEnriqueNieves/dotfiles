@@ -133,7 +133,7 @@ nnoremap <silent> <leader>gl :diffget LOCAL<CR>
 nnoremap <silent> <leader>gr :diffget REMOTE<CR>
 nnoremap <leader>ev :edit ~/.vimrc<CR>
 nnoremap <leader>eb :edit ~/.bashrc<CR>
-nnoremap <leader>en :edit ~/.config/nvim/init.vim<CR>
+nnoremap <leader>en :edit ~/.config/nvim/init.lua<CR>
 
 " select recently pasted text
 nnoremap gp `[v`]
@@ -283,3 +283,21 @@ endfunction
 nnoremap <leader>b :call ToggleBackground()<CR>
 " critical fix: prevents vimwiki from hijacking markdown
 
+
+
+" Shortcuts for adding or removing spaces quickly!
+" CTRL will be used to add a blank line
+" ALT will be used to delete a line
+" Normal mode
+nnoremap <C-j> o<Esc>k
+nnoremap <C-k> O<Esc>j
+
+nnoremap <A-j> jddk
+nnoremap <A-k> kdd
+
+" Insert mode
+inoremap <C-j> <Esc>o<Esc>k
+inoremap <C-k> <Esc>O<Esc>j
+
+inoremap <A-j> <Esc>jddk
+inoremap <A-k> <Esc>kdd
