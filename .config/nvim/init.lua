@@ -25,6 +25,7 @@ require("lazy").setup({
   { "preservim/nerdcommenter" },
   { "SirVer/ultisnips" },
   { "preservim/nerdtree" },
+  { "rakr/vim-one"},
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -70,7 +71,7 @@ require("lazy").setup({
       vertical_term:toggle()
     end, { desc = "Toggle vertical terminal" })
 
-    vim.keymap.set("v", "<C-[>", function()
+    vim.keymap.set("v", "<leader>tt", function()
       local file = vim.fn.expand("%:p")
       local start_line = vim.fn.line("'<")
       local end_line = vim.fn.line("'>")
@@ -83,8 +84,6 @@ require("lazy").setup({
       vim.api.nvim_set_current_buf(vertical_term.bufnr)
     
       vertical_term:send(input .. "\n", true)
-    
-      vim.cmd("startinsert!")
     end)
 
   end,
@@ -107,7 +106,90 @@ require("lazy").setup({
 
   { "preservim/vim-markdown" },
   { "ferrine/md-img-paste.vim" },
-  { "vimwiki/vimwiki" },
+  { "vimwiki/vimwiki",
+  init = function()
+
+	---------------------------------------
+	--       Vimwiki
+	---------------------------------------
+
+	vim.api.nvim_create_augroup("VimwikiTabFix", { clear = true })
+
+	vim.api.nvim_create_autocmd("FileType", {
+	  group = "VimwikiTabFix",
+	  pattern = "vimwiki",
+	  callback = function()
+	    vim.keymap.set("n", "<Tab>", "<Nop>", { buffer = true })
+	    vim.keymap.set("n", "<S-Tab>", "<Nop>", { buffer = true })
+	    vim.keymap.set("i", "<Tab>", "<Nop>", { buffer = true })
+	    vim.keymap.set("i", "<S-Tab>", "<Nop>", { buffer = true })
+	  end,
+	})
+
+	vim.g.vimwiki_list = {
+	  { path = "~/vimwiki/", syntax = "markdown", ext = ".md"},
+	  { path = "/home/davidn/Documents/Notes/", syntax = "markdown", ext = ".md" },
+	}
+
+
+	local function VimwikiNewArticleFromArg(article_title)
+	  local article = article_title:gsub(" ", "_")
+
+	  local dir_pth = article .. "/" .. article .. ".md"
+	  local pth = "./" .. dir_pth
+	  local glob_dir = vim.fn.expand("%:p:h") .. "/" .. article
+
+	  local link = "[" .. article_title .. "](" .. pth .. ")"
+
+	  -- replace current line
+	  vim.api.nvim_set_current_line(link)
+
+	  -- create directory
+	  local ok = vim.fn.mkdir(glob_dir, "p")
+	  if ok == 0 then
+	    vim.notify("Failed to create directory: " .. glob_dir, vim.log.levels.ERROR)
+	  end
+
+	  -- save file
+	  vim.cmd("write")
+
+	  -- follow wiki link
+	  vim.cmd("VimwikiFollowLink")
+
+	  -- timestamp
+	  local creat_time = os.date("%Y-%m-%d %a %I:%M %p")
+
+	  -- rewrite page
+	  vim.api.nvim_set_current_line("# " .. article_title)
+	  vim.cmd("normal! o")
+	  vim.cmd("normal! o")
+	  vim.api.nvim_set_current_line("Created: " .. creat_time)
+
+	  vim.cmd("normal! o")
+	  vim.cmd("startinsert")
+	end
+
+
+
+	local function VimwikiNewArticleAskName()
+	  local article_title = vim.fn.input("Article name: ")
+
+	  if article_title == "" then
+	    vim.notify("No article name provided.")
+	    return
+	  end
+
+	  VimwikiNewArticleFromArg(article_title)
+	end
+
+	vim.keymap.set("n", "<leader>wa", VimwikiNewArticleAskName)
+
+	-- critical fix: prevents vimwiki from hijacking markdown
+	vim.g.vimwiki_global_ext = 0
+
+  end,
+
+  },
   -- LaTeX
   { "lervag/vimtex" },
 
@@ -214,8 +296,6 @@ vim.g.vimtex_quickfix_mode = 0
 
 vim.g["airline#extensions#tabline#enabled"] = 1
 
--- critical fix: prevents vimwiki from hijacking markdown
-vim.g.vimwiki_global_ext = 0
 
 ---------------------------------------
 --       Telescope
@@ -263,7 +343,7 @@ require("telescope").setup({
 
 -- Theme / colors
 vim.opt.background = "light"
--- vim.cmd("colorscheme one")
+vim.cmd("colorscheme one")
 
 -- Airline settings (vimscript globals)
 vim.g.airline_theme = "one"
@@ -291,85 +371,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
----------------------------------------
---       Vimwiki
----------------------------------------
-
-vim.api.nvim_create_augroup("VimwikiTabFix", { clear = true })
-
-vim.api.nvim_create_autocmd("FileType", {
-  group = "VimwikiTabFix",
-  pattern = "vimwiki",
-  callback = function()
-    vim.keymap.set("n", "<Tab>", "<Nop>", { buffer = true })
-    vim.keymap.set("n", "<S-Tab>", "<Nop>", { buffer = true })
-    vim.keymap.set("i", "<Tab>", "<Nop>", { buffer = true })
-    vim.keymap.set("i", "<S-Tab>", "<Nop>", { buffer = true })
-  end,
-})
-
-vim.g.vimwiki_list = {
-  { path = "~/vimwiki/", syntax = "markdown", ext = ".md" },
-  { path = "/home/davidn/Documents/Notes/", syntax = "markdown", ext = ".md" },
-}
-
-
-local function VimwikiNewArticleFromArg(article_title)
-  local article = article_title:gsub(" ", "_")
-
-  local dir_pth = article .. "/" .. article .. ".md"
-  local pth = "./" .. dir_pth
-  local glob_dir = vim.fn.expand("%:p:h") .. "/" .. article
-
-  local link = "[" .. article_title .. "](" .. pth .. ")"
-
-  -- replace current line
-  vim.api.nvim_set_current_line(link)
-
-  -- create directory
-  local ok = vim.fn.mkdir(glob_dir, "p")
-  if ok == 0 then
-    vim.notify("Failed to create directory: " .. glob_dir, vim.log.levels.ERROR)
-  end
-
-  -- save file
-  vim.cmd("write")
-
-  -- follow wiki link
-  vim.cmd("VimwikiFollowLink")
-
-  -- timestamp
-  local creat_time = os.date("%Y-%m-%d %a %I:%M %p")
-
-  -- rewrite page
-  vim.api.nvim_set_current_line("# " .. article_title)
-  vim.cmd("normal! o")
-  vim.cmd("normal! o")
-  vim.api.nvim_set_current_line("Created: " .. creat_time)
-
-  vim.cmd("normal! o")
-  vim.cmd("startinsert")
-end
-
-
-local function VimwikiNewArticleAskName()
-  local article_title = vim.fn.input("Article name: ")
-
-  if article_title == "" then
-    vim.notify("No article name provided.")
-    return
-  end
-
-  VimwikiNewArticleFromArg(article_title)
-end
-
-local function VimwikiNewWeeklyArticle()
-  local title = GetWeekNotesTitle()
-  VimwikiNewArticleFromArg(title)
-end
-
-vim.keymap.set("n", "<leader>wk", VimwikiNewWeeklyArticle)
-vim.keymap.set("n", "<leader>wa", VimwikiNewArticleAskName)
 
 ---------------------------------------
 --       Markdown Preview
