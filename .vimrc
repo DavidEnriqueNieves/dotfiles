@@ -36,6 +36,9 @@ set hlsearch
 " dark background
 set background=dark
 
+filetype plugin indent on
+syntax enable
+
 " highlight the search result
 set hlsearch
 " starts searching as you type
@@ -228,8 +231,8 @@ augroup END
 "inoremap <C-Space> <Esc>O
 "nnoremap <C-Space> <Esc>O<Esc>
 
-highlight Cursor guifg=white guibg=black
-highlight iCursor guifg=white guibg=steelblue
+" highlight Cursor guifg=white guibg=black
+" highlight iCursor guifg=white guibg=steelblue
 set guicursor=n-v-c:block-Cursor
 set guicursor+=i:ver100-iCursor
 set guicursor+=n-v-c:blinkon0
@@ -271,7 +274,7 @@ nnoremap cn :cnext<cr>
 nnoremap cm :make<cr>
 nnoremap cp :cprev<cr>
 tnoremap <Esc> <C-\><C-n>
-colorscheme default
+" colorscheme default
 
 function! ToggleBackground()
     if &background == 'dark'
@@ -282,3 +285,39 @@ function! ToggleBackground()
 endfunction
 nnoremap <leader>b :call ToggleBackground()<CR>
 
+
+function! CopyFilePath()
+  let l:path = expand('%:p')
+
+  if has('clipboard')
+    let @+ = l:path
+  else
+    call system('xclip -selection clipboard', l:path)
+  endif
+
+  echo "Copied file path: " . l:path
+endfunction
+
+function! CopyRangeWithContext() range abort
+  let l:file = expand('%:p')
+  let l:start = a:firstline
+  let l:end = a:lastline
+  let l:lines = getline(l:start, l:end)
+
+  let l:content = l:file . ":" . l:start . "-" . l:end . "\n"
+
+  if has('clipboard')
+    let @+ = l:content
+  else
+    " echo l:content
+    " call system('xclip -selection clipboard -in', l:content)
+    call system('printf "%s" ' . shellescape(l:content) . ' | xclip -selection clipboard')
+  endif
+
+  echo "Copied range " . l:start . "-" . l:end
+endfunction
+
+xnoremap <leader>y :<C-u>'<,'>call CopyRangeWithContext()<CR>
+command! CopyFilePath call CopyFilePath()
+
+nmap <leader>yf :CopyFilePath<CR>
