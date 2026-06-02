@@ -10,6 +10,7 @@ FILES_TO_INSTALL=(
     ".gitconfig"
     ".inputrc"
     ".config/nvim"
+    ".config/Code"
     ".bash-preexec.sh"
     "dark_mode.sh"
     "light_mode.sh"

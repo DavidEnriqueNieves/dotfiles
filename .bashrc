@@ -116,7 +116,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH="/home/david/.local/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/Downloads/blender-3.4.1-linux-x64:$PATH"
 export PATH="/usr/local/texlive/2025/bin/x86_64-linux/:$PATH"
 export MANPATH="/usr/local/texlive/2025/texmf-dist/doc/man:$MANPATH"
@@ -137,19 +137,19 @@ export PATH="$HOME/bin:$PATH"
 bind -m vi-command 'Control-l: clear-screen'
 bind -m vi-insert 'Control-l: clear-screen'
 
-alias dfls='/usr/bin/git --git-dir=/home/david/.cfg/ --work-tree=/home/david'
+alias dfls='/usr/bin/git --git-dir="/home/$USER/github/dotfiles" --work-tree="/home/$USER"'
 . "$HOME/.cargo/env"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/david/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/$USER/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/david/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/david/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/$USER/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/$USER/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/david/miniconda3/bin:$PATH"
+        export PATH="/home/$USER/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -482,3 +482,8 @@ export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
 # opencode
 export PATH=/home/david/.opencode/bin:$PATH
+
+# opencode
+export PATH=/home/$USER/.opencode/bin:$PATH
+
+alias xcc="xclip -sel clip"

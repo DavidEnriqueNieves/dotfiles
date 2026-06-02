@@ -36,9 +36,6 @@ set hlsearch
 " dark background
 set background=dark
 
-filetype plugin indent on
-syntax enable
-
 " highlight the search result
 set hlsearch
 " starts searching as you type
@@ -136,7 +133,7 @@ nnoremap <silent> <leader>gl :diffget LOCAL<CR>
 nnoremap <silent> <leader>gr :diffget REMOTE<CR>
 nnoremap <leader>ev :edit ~/.vimrc<CR>
 nnoremap <leader>eb :edit ~/.bashrc<CR>
-nnoremap <leader>en :edit ~/.config/nvim/init.vim<CR>
+nnoremap <leader>en :edit ~/.config/nvim/init.lua<CR>
 
 " select recently pasted text
 nnoremap gp `[v`]
@@ -231,8 +228,8 @@ augroup END
 "inoremap <C-Space> <Esc>O
 "nnoremap <C-Space> <Esc>O<Esc>
 
-" highlight Cursor guifg=white guibg=black
-" highlight iCursor guifg=white guibg=steelblue
+highlight Cursor guifg=white guibg=black
+highlight iCursor guifg=white guibg=steelblue
 set guicursor=n-v-c:block-Cursor
 set guicursor+=i:ver100-iCursor
 set guicursor+=n-v-c:blinkon0
@@ -274,7 +271,7 @@ nnoremap cn :cnext<cr>
 nnoremap cm :make<cr>
 nnoremap cp :cprev<cr>
 tnoremap <Esc> <C-\><C-n>
-" colorscheme default
+colorscheme default
 
 function! ToggleBackground()
     if &background == 'dark'
@@ -322,3 +319,21 @@ xnoremap <leader>y :<C-u>'<,'>call CopyRangeWithContext()<CR>
 command! CopyFilePath call CopyFilePath()
 
 nmap <leader>yf :CopyFilePath<CR>
+
+
+" Shortcuts for adding or removing spaces quickly!
+" CTRL will be used to add a blank line
+" ALT will be used to delete a line
+" Normal mode
+nnoremap <C-j> o<Esc>k
+nnoremap <C-k> O<Esc>j
+
+nnoremap <A-j> jddk
+nnoremap <A-k> kdd
+
+" Insert mode
+inoremap <C-j> <Esc>o<Esc>k
+inoremap <C-k> <Esc>O<Esc>j
+
+inoremap <A-j> <Esc>jddk
+inoremap <A-k> <Esc>kdd
