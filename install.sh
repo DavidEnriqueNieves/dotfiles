@@ -9,6 +9,7 @@ FILES_TO_INSTALL=(
     ".tmux.conf"
     ".gitconfig"
     ".inputrc"
+    ".config/nvim"
     ".bash-preexec.sh"
     "dark_mode.sh"
     "light_mode.sh"

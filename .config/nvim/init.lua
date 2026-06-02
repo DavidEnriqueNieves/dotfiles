@@ -319,6 +319,7 @@ require("telescope").setup({
       "--line-number",
       "--column",
       "--smart-case",
+      "--no-ignore",
       "--hidden", -- include hidden files
   	"--glob", "!.git/*",
     },
@@ -329,6 +330,7 @@ require("telescope").setup({
         "rg",
         "--files",
         "--hidden",
+	"--no-ignore",
         "--glob",
         "!.git/*", -- exclude .git
       },
